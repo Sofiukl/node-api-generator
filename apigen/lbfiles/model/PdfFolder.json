@@ -1,0 +1,1 @@
+{"accepts":[{"arg":"PINProjectID","type":"number","required":true},{"arg":"ParentFolderID","type":"number","required":true}],"returns":{"arg":"result","type":"array"},"http":{"verb":"get","path":"/count"}}

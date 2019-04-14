@@ -1,0 +1,51 @@
+{
+  "model_name": "ReportFolder",
+  "methods": {
+    "detail": {
+      "name": "getCount",
+      "file_name": {
+        "json_name": "./apigen/lbfiles/model/PdfFolder.json",
+        "model_name": "./apigen/lbfiles/model/PdfFolder.js",
+        "lib_name": "./apigen/lbfiles/lib/PdfFolder.js"
+      },
+      "lb_config": {
+        "accepts": [
+          {
+            "arg": "PINProjectID",
+            "type": "number",
+            "required": true
+          },
+          {
+            "arg": "ParentFolderID",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "returns": {
+          "arg": "result",
+          "type": "array",
+          "root": true
+        },
+        "http": {
+          "verb": "get",
+          "path": "/count"
+        }
+      },
+      "data_api_config": {
+        "data_api_name": "usp_AM_PDFReportFolder_q_case1S_1",
+        "accepts": [
+          {
+            "arg": "PINProjectID",
+            "type": "number",
+            "required": true
+          },
+          {
+            "arg": "ParentFolderID",
+            "type": "number",
+            "required": true
+          }
+        ]
+      }
+    }
+  }
+}
