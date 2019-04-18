@@ -14,9 +14,12 @@ type Method struct {
 //Detail - This is detail
 type Detail struct {
 	Name          string        `json:"name,omitempty"`
+	Type          string        `json:"type,omitempty"`
 	FileName      FileName      `json:"file_name,omitempty"`
 	LbConfig      LbConfig      `json:"lb_config,omitempty"`
 	DataAPIConfig DataAPIConfig `json:"data_api_config,omitempty"`
+	PostProcess   []string      `json:"post_process,omitempty"`
+	PreProcess    []string      `json:"pre_process,omitempty"`
 }
 
 //FileName - This is file name
@@ -24,6 +27,7 @@ type FileName struct {
 	JSONName  string `json:"json_name,omitempty"`
 	ModelName string `json:"model_name,omitempty"`
 	LibName   string `json:"lib_name,omitempty"`
+	ConstName string `json:"const_name,omitempty"`
 }
 
 //LbConfig - This is lb config
@@ -57,4 +61,5 @@ type Accept struct {
 type DataAPIConfig struct {
 	DataAPIName string   `json:"data_api_name,omitempty"`
 	Accepts     []Accept `json:"accepts,omitempty"`
+	PrimaryKey  string
 }

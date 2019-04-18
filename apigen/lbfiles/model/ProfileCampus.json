@@ -1,0 +1,1 @@
+"patchCampus":{"accepts":[{"arg":"CampusID","type":"number","required":true}],"returns":{"arg":"result","type":"array"},"http":{"verb":"get","path":"/updateCampus"}},

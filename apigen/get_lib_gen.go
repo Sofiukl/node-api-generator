@@ -21,7 +21,7 @@ func createLibFuncStart(apimodel API) {
 
 func createLibFuncParams(apimodel API) {
 	paramStr := "("
-	Accepts := apimodel.Methods.Detail.LbConfig.Accepts
+	Accepts := apimodel.Methods.Detail.DataAPIConfig.Accepts
 	for i, Accept := range Accepts {
 		if i == 0 {
 			paramStr += Accept.Arg
@@ -44,7 +44,7 @@ func createLibFuncBody(apimodel API) {
 		message: '` + validationMsg + `'});
 	}
 	`
-
+	logMsg := apimodel.ModelName + "." + apimodel.Methods.Detail.Name + "- Error - ${error.message}"
 	bodyContent := prepareLibBodyContent(apimodel)
 	bodyStr := ` { 
 		`
@@ -55,9 +55,10 @@ func createLibFuncBody(apimodel API) {
 	bodyStr += bodyContent
 	bodyStr += `
 		} catch (error) {
-			return error;
-		}
-		`
+			logger.log('error',` + "`" + logMsg + "`);" +
+		`	
+			return Promise.resolve(error);
+		}`
 	bodyStr += validationElseStr
 	bodyStr += `
 };`
@@ -66,10 +67,11 @@ func createLibFuncBody(apimodel API) {
 }
 
 func prepareLibBodyContent(apimodel API) string {
+	logMsg := apimodel.ModelName + "." + apimodel.Methods.Detail.Name + "- Error - Unable to process"
 	bc := `  
 			let command = [];
 		`
-	for _, Accept := range apimodel.Methods.Detail.LbConfig.Accepts {
+	for _, Accept := range apimodel.Methods.Detail.DataAPIConfig.Accepts {
 		key := "APIVariable." + Accept.Arg
 		value := Accept.Arg
 		objStr := `{key: ` + key + `, value: ` + value + `}`
@@ -80,7 +82,12 @@ func prepareLibBodyContent(apimodel API) string {
 	}
 	bc += `
 			const response = await dataAPI.getDataAPIProjectDB(QueryID.` + apimodel.Methods.Detail.DataAPIConfig.DataAPIName + `, PINProjectID, command);
-			return response;
+			if(response && response.result.length > 0) {
+				return response;
+			} else {
+				logger.log('error','` + logMsg + `');
+			}
+			
 		`
 	return bc
 }
@@ -94,7 +101,7 @@ func PrepareLibFuncCalling(apimodel API) string {
 
 	//
 	paramStr := "("
-	Accepts := apimodel.Methods.Detail.LbConfig.Accepts
+	Accepts := apimodel.Methods.Detail.DataAPIConfig.Accepts
 	for i, Accept := range Accepts {
 		if i == 0 {
 			paramStr += Accept.Arg

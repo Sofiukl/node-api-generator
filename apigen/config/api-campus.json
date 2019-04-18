@@ -1,0 +1,50 @@
+{
+    "model_name": "ProfileCampus",
+    "methods": {
+      "detail": {
+        "name": "patchCampus",
+        "type": "PATCH",
+        "file_name": {
+          "json_name": "./apigen/lbfiles/model/ProfileCampus.json",
+          "model_name": "./apigen/lbfiles/model/ProfileCampus.js",
+          "lib_name": "./apigen/lbfiles/lib/ProfileCampus.js",
+          "const_name": "./apigen/lbfiles/common/constants.js"
+        },
+        "lb_config": {
+          "accepts": [
+            {
+              "arg": "CampusID",
+              "type": "number",
+              "required": true
+            }
+          ],
+          "returns": {
+            "arg": "result",
+            "type": "array",
+            "root": true
+          },
+          "http": {
+            "verb": "get",
+            "path": "/updateCampus"
+          }
+        },
+        "data_api_config": {
+          "data_api_name": "usp_AM_ProfileCampus_u_case1S_1",
+          "accepts": [
+            {
+              "arg": "CampusID",
+              "type": "number",
+              "required": true
+            }
+          ],
+          "primaryKey": "CampusID"
+        },
+        "pre_process" : ["if (input.isSubmit) {",
+          "input.SubmittedBy = currentUser.PWUserID",
+          "}"],
+        "post_process" : ["if (input.isSubmit) {",
+            "await this.updateReportSubmitAuditFields(input.PINProjectID, input);",
+        "}"]
+      }
+    }
+  }

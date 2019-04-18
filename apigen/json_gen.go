@@ -12,5 +12,8 @@ func WriteToJSONFile(apimodel API) {
 	if err != nil {
 		fmt.Println("Failt to  read loopback JSON file", err)
 	}
-	ReplaceFileContent(apimodel.Methods.Detail.FileName.JSONName, "#Replace#", string(b))
+	apiMetadata := string(b)
+	methodName := apimodel.Methods.Detail.Name
+	fileContent := `"` + methodName + `":` + apiMetadata + ","
+	ReplaceFileContent(apimodel.Methods.Detail.FileName.JSONName, "#Replace#", fileContent)
 }
