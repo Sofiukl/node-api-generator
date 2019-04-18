@@ -37,11 +37,27 @@ func createModelFuncParams(apimodel API) {
 }
 
 func createModelFuncBody(apimodel API) {
-	bodyContent := "return await " + PrepareLibFuncCalling(apimodel) + ";"
+
+	Accepts := apimodel.Methods.Detail.LbConfig.Accepts
+	for _, Accept := range Accepts {
+
+	}
+
+	bodyContent := `const libRes = ` + PrepareLibFuncCalling(apimodel) + `;`
+	bodyContent += ` if (libRes.error) return libRes;`
+
+	responseStr := `
+		error : libRes.result[0].error,
+		result : [{
+
+		}]
+	`
+
 	bodyStr := ` => { 
 	try { 
 		`
 	bodyStr += bodyContent
+	bodyStr += responseStr
 	bodyStr += `
 		
 	} catch (error) {

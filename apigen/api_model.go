@@ -61,5 +61,6 @@ type Accept struct {
 type DataAPIConfig struct {
 	DataAPIName string   `json:"data_api_name,omitempty"`
 	Accepts     []Accept `json:"accepts,omitempty"`
-	PrimaryKey  string
+	PrimaryKey  string   `json:"primary_key,omitempty"`
+	TableName   string   `json:"table_name,omitempty"`
 }

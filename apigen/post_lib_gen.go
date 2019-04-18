@@ -26,6 +26,8 @@ func createPostAPILibFuncParams(apimodel API) {
 }
 
 func createPostAPILibFuncBody(apimodel API) {
+	tableName := apimodel.Methods.Detail.DataAPIConfig.TableName
+	primaryKey := apimodel.Methods.Detail.DataAPIConfig.PrimaryKey
 	validationMsg := apimodel.Methods.Detail.Name + " - required fields are undefined"
 	validationIfStr := `
 	if (input && input.PINProjectID) {
@@ -36,6 +38,7 @@ func createPostAPILibFuncBody(apimodel API) {
 		message: '` + validationMsg + `'});
 	}
 	`
+	sequenceGenStr := `	const ` + primaryKey + ` = await dataAPI.executeSequenceGenerator(TableID.` + tableName + `,1);`
 	logMsg := apimodel.ModelName + "." + apimodel.Methods.Detail.Name + "- Error - ${error.message}"
 	bodyContent := preparePostAPILibBodyContent(apimodel)
 	bodyStr := ` { 
@@ -44,6 +47,7 @@ func createPostAPILibFuncBody(apimodel API) {
 	bodyStr += `
 		try { 
 		`
+	bodyStr += sequenceGenStr
 	bodyStr += bodyContent
 	bodyStr += `
 		} catch (error) {
@@ -59,29 +63,54 @@ func createPostAPILibFuncBody(apimodel API) {
 }
 
 func preparePostAPILibBodyContent(apimodel API) string {
-	bc := `  
+	preProcessStrs := DoPreProcess(apimodel)
+	postProcessStrs := DoPostProcess(apimodel)
+	preProcessStr := ""
+	for _, preStr := range preProcessStrs {
+		preProcessStr += `
+			` + preStr + `
+		`
+	}
+	primaryKey := apimodel.Methods.Detail.DataAPIConfig.PrimaryKey
+	keyStr := "APIVariable." + primaryKey
+	valueStr := primaryKey + ".result"
+	primaryKeyObjStr := `{key: ` + keyStr + `, value: ` + valueStr + `}`
+	primaryKeyCommandPushStr := `
+			command.push(` + primaryKeyObjStr + `);
+		`
+	bc := preProcessStr +
+		`  
 			let command = [];
 		`
 	for _, Accept := range apimodel.Methods.Detail.DataAPIConfig.Accepts {
 		key := "APIVariable." + Accept.Arg
-		value := Accept.Arg
+		value := "input." + Accept.Arg
 		objStr := `{key: ` + key + `, value: ` + value + `}`
 		commandPushStr := `
 			command.push(` + objStr + `);
 		`
 		bc += commandPushStr
 	}
+	bc += primaryKeyCommandPushStr
 	bc += `
 			const response = await dataAPI.getDataAPIProjectDB(QueryID.` + apimodel.Methods.Detail.DataAPIConfig.DataAPIName + `, PINProjectID, command);
 			if(response && response.result[0].affectedRows != 1) {
 				return Promise.resolve(result);
-			}
+			}`
+	for _, postStr := range postProcessStrs {
+		bc += `
+			` + postStr + `
+			`
+	}
+	bc += `
 			return Promise.resolve({
 				result: [{
-				  error: false,`
-	bc += apimodel.Methods.Detail.DataAPIConfig.PrimaryKey + `: response.result
-			}]
-			  });
+					error: false,
+					`
+	bc += apimodel.Methods.Detail.DataAPIConfig.PrimaryKey + `: ` + valueStr
+	bc += `
+				}]
+			});
 		`
 	return bc
 }

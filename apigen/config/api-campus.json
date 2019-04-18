@@ -2,8 +2,8 @@
     "model_name": "ProfileCampus",
     "methods": {
       "detail": {
-        "name": "patchCampus",
-        "type": "PATCH",
+        "name": "postCampus",
+        "type": "POST",
         "file_name": {
           "json_name": "./apigen/lbfiles/model/ProfileCampus.json",
           "model_name": "./apigen/lbfiles/model/ProfileCampus.js",
@@ -25,7 +25,7 @@
           },
           "http": {
             "verb": "get",
-            "path": "/updateCampus"
+            "path": "/createCampus"
           }
         },
         "data_api_config": {
@@ -37,7 +37,8 @@
               "required": true
             }
           ],
-          "primaryKey": "CampusID"
+          "primary_key": "CampusID",
+          "table_name": "AM_PDFReportComment"
         },
         "pre_process" : ["if (input.isSubmit) {",
           "input.SubmittedBy = currentUser.PWUserID",

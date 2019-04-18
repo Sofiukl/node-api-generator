@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	configFile = "./apigen/config/api-campus.json"
+	configFile = "./apigen/config/api-report-comment.json"
 )
 
 // ParseAPIConfig - This function parse the api config file

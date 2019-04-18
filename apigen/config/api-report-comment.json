@@ -1,0 +1,80 @@
+{
+    "model_name": "ReportComment",
+    "methods": {
+      "detail": {
+        "name": "addComment",
+        "type": "POST",
+        "file_name": {
+          "json_name": "./apigen/lbfiles/model/ReportComment.json",
+          "model_name": "./apigen/lbfiles/model/ReportComment.js",
+          "lib_name": "./apigen/lbfiles/lib/ReportComment.js",
+          "const_name": "./apigen/lbfiles/common/constants.js"
+        },
+        "lb_config": {
+            "accepts": [
+                {
+                  "arg": "PINProjectID", 
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "arg": "PDFReportID", 
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "arg": "Comment", 
+                  "type": "string",
+                  "required": true
+                },
+                {
+                  "arg": "ReportActivity", 
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "arg": "PDFReportTemplateID", 
+                  "type": "number",
+                  "required": false
+                }
+              ],
+              "returns": { "arg": "result", "type": "array", "root": true},
+              "http": {"verb": "post", "path": "/add-comment"}
+        },
+        "data_api_config": {
+          "data_api_name": "usp_AM_PDFReportComment_i",
+          "accepts": [
+                {
+                    "arg": "PDFReportID", 
+                    "type": "number",
+                    "required": true
+                },
+                {
+                    "arg": "Comment", 
+                    "type": "string",
+                    "required": true
+                },
+                {
+                    "arg": "ReportActivity", 
+                    "type": "number",
+                    "required": true
+                },
+                {
+                    "arg": "CreateBy", 
+                    "type": "number",
+                    "required": true
+                }
+          ],
+          "primary_key": "ReportCommentID",
+          "table_name": "AM_PDFReportComment"
+        },
+        "pre_process" : [ " const currentUser = util.getLoggedInUser();",
+            "input.CreateBy = currentUser.PWUserID;"],
+        "post_process" : [
+            "await this.updateReportAuditFields(input.PINProjectID, input);",
+            "result.ReportCommentID = ReportCommentID.result;",
+            "result.ReportActivity = ReportActivity;"
+        ]
+      }
+    }
+  }
